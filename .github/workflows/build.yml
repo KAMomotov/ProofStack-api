@@ -45,3 +45,13 @@ jobs:
           platforms: linux/amd64,linux/arm64
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Dispatch digest to homelab-k8s
+        run: |
+          DIGEST="${{ steps.build.outputs.digest }}"
+          echo "digest=$DIGEST"
+          curl -sS -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.HOMELAB_DISPATCH_TOKEN }}" \
+            https://api.github.com/repos/KAMomotov/homelab-k8s/dispatches \
+            -d "{\"event_type\":\"image_published\",\"client_payload\":{\"app\":\"api\",\"digest\":\"${DIGEST}\"}}"
