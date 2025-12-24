@@ -79,13 +79,23 @@ jobs:
         env:
           TOKEN: ${{ secrets.HOMELAB_DISPATCH_TOKEN }}
           DIGEST: ${{ steps.build.outputs.digest }}
+        shell: bash
         run: |
+          set -euo pipefail
           test -n "$DIGEST"
+
           payload=$(jq -n --arg app "api" --arg digest "$DIGEST" \
             '{event_type:"image_published", client_payload:{app:$app, digest:$digest}}')
           echo "$payload"
-          curl -sS -X POST \
+
+          code=$(curl -sS -o /tmp/dispatch.out -w "%{http_code}" \
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${TOKEN}" \
-            https://api.github.com/repos/KAMomotov/HomeLab-k8s/dispatches \
-            -d "$payload"
+            -X POST https://api.github.com/repos/KAMomotov/HomeLab-k8s/dispatches \
+            -d "$payload" || true)
+
+          echo "dispatch_http_code=$code"
+          cat /tmp/dispatch.out || true
+
+          # GitHub на успех обычно отдаёт 204 No Content
+          test "$code" = "204"
