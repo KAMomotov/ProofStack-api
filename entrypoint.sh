@@ -1,9 +1,9 @@
 #!/usr/bin/env sh
 set -eu
 
-# Если Django-проект уже есть (config/wsgi.py), запускаем gunicorn
-if python -c "import importlib; importlib.import_module('config.wsgi')" >/dev/null 2>&1; then
-  exec gunicorn ${GUNICORN_APP:-config.wsgi:application} \
+# Если Django-проект уже есть (proofstack.wsgi.py), запускаем gunicorn
+if python -c "import importlib; importlib.import_module('proofstack.wsgi')" >/dev/null 2>&1; then
+  exec gunicorn ${GUNICORN_APP:-proofstack.wsgi:application} \
     --bind 0.0.0.0:8000 \
     --workers ${GUNICORN_WORKERS:-2} \
     --threads ${GUNICORN_THREADS:-4} \
