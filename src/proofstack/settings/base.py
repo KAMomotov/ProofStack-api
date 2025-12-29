@@ -1,7 +1,7 @@
 from pathlib import Path
 import environ
 
-# base.py находится тут: src/proofstack/settings/base.py
+# abc.py находится тут: src/proofstack/settings/abc.py
 SRC_DIR = Path(__file__).resolve().parents[2]     # .../src
 REPO_DIR = SRC_DIR.parent                         # корень репозитория
 
@@ -41,10 +41,12 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 
+    "reversion",
     "rest_framework",
     "storages",
 
     "apps.core",
+    "apps.profile",
 ]
 
 MIDDLEWARE = [
@@ -55,6 +57,8 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+
+    "reversion.middleware.RevisionMiddleware",
 ]
 
 ROOT_URLCONF = "proofstack.urls"
